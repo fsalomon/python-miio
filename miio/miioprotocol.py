@@ -48,6 +48,7 @@ class MiIOProtocol:
         self._device_ts = None  # type: datetime.datetime
         self.__id = start_id
         self._device_id = None
+        self.sid = None
 
     def send_handshake(self) -> Message:
         """Send a handshake to the device,
@@ -140,6 +141,10 @@ class MiIOProtocol:
             self.send_handshake()
 
         cmd = {"id": self._id, "method": command}
+
+        if self.sid is not None:
+            cmd["sid"] = self.sid
+            self.sid = None
 
         if parameters is not None:
             cmd["params"] = parameters
