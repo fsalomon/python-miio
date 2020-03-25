@@ -144,7 +144,6 @@ class MiIOProtocol:
 
         if self.sid is not None:
             cmd["sid"] = self.sid
-            self.sid = None
 
         if parameters is not None:
             cmd["params"] = parameters
@@ -231,6 +230,7 @@ class MiIOProtocol:
 
             _LOGGER.error("Got error when receiving: %s", ex)
             raise DeviceException("Unable to recover failed command") from ex
+        self.sid = None
 
     @property
     def _id(self) -> int:
