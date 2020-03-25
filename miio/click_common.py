@@ -10,6 +10,7 @@ import re
 import sys
 from functools import partial, wraps
 from typing import Union
+from random import randint
 
 import click
 
@@ -239,6 +240,7 @@ class DeviceGroup(click.MultiCommand):
         gco = ctx.find_object(GlobalContextObject)
         if gco:
             kwargs["debug"] = gco.debug
+        kwargs["start_id"] = randint(0, 9998)
         ctx.obj = self.device_class(*args, **kwargs)
 
     def command_callback(self, miio_command, miio_device, *args, **kwargs):
