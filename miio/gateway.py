@@ -5,7 +5,7 @@ from typing import Optional
 
 import click
 
-from .click_common import command, format_output
+from .click_common import LiteralParamType, command, format_output
 from .device import Device
 from .utils import brightness_and_color_to_int, int_to_brightness, int_to_rgb
 
@@ -40,7 +40,8 @@ class DeviceType(IntEnum):
     AqaraSwitch = 51
     AqaraMotion = 52
     AqaraMagnet = 53
-
+    AqaraRelay = 54
+    AqaraSwitch2 = 135
 
 class Gateway(Device):
     """Main class representing the Xiaomi Gateway.
@@ -77,7 +78,13 @@ class Gateway(Device):
     ## scene
     * get_lumi_bind ["scene", <page number>] for rooms/devices"""
 
-    def __init__(self, ip: str = None, token: str = None) -> None:
+    def __init__(
+        self,
+        ip: str = None,
+        token: str = None,
+        start_id: int = 0,
+        debug: int = 0,
+    ) -> None:
         super().__init__(ip, token)
         self._alarm = GatewayAlarm(self)
         self._radio = GatewayRadio(self)
@@ -126,6 +133,22 @@ class Gateway(Device):
     def set_device_prop(self, sid, property, value):
         """Set the device property."""
         return self.send("set_device_prop", {"sid": sid, property: value})
+
+    @command(
+        click.argument("sid"),
+        click.argument("command", type=str, required=True),
+        click.argument("parameters", type=LiteralParamType(), required=False),
+    )
+    def raw_child_command(self, sid, command, parameters):
+        """Send a raw command to a child device.
+        This is mostly useful when trying out commands which are not
+        implemented by a given device instance.
+
+        :param str sid: SID of child device
+        :param str command: Command to send
+        :param dict parameters: Parameters to send"""
+        self._protocol.sid = sid;
+        return self.send(command, parameters)
 
     @command()
     def clock(self):
