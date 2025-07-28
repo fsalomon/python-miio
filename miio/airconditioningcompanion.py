@@ -34,6 +34,7 @@ class FanSpeed(enum.Enum):
     Medium = 1
     High = 2
     Auto = 3
+    Whateva = 4
 
 
 class SwingMode(enum.Enum):
