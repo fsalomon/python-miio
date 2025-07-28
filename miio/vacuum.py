@@ -609,7 +609,7 @@ class Vacuum(Device):
             callback=callback,
         )
 
-        @dg.resultcallback()
+        @dg.result_callback()
         @dg.device_pass
         def cleanup(vac: Vacuum, *args, **kwargs):
             if vac.ip is None:  # dummy Device for discovery, skip teardown
